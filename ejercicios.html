@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tutorial: Página Web Semántica HTML5</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* =============================================
+       VARIABLES GLOBALES
+    ============================================= */
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b27;
+      --card:      #1c2135;
+      --border:    #2a3050;
+      --text:      #e2e8f8;
+      --muted:     #6b7599;
+      --code-bg:   #090c14;
+
+      /* Colores por zona semántica */
+      --header-c:  #60a5fa;   /* azul     */
+      --nav-c:     #34d399;   /* verde    */
+      --main-c:    #f97316;   /* naranja  */
+      --article-c: #a78bfa;   /* violeta  */
+      --section-c: #fb923c;   /* naranja claro */
+      --aside-c:   #fbbf24;   /* amarillo */
+      --footer-c:  #f472b6;   /* rosa     */
+      --figure-c:  #22d3ee;   /* cyan     */
+
+      --radius: 12px;
+      --mono: 'Space Mono', monospace;
+      --sans: 'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    /* =============================================
+       HEADER DEL TUTORIAL
+    ============================================= */
+    .tut-header {
+      background: linear-gradient(135deg, #0d1117 0%, #161b27 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 2rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .tut-header::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 15% 50%, rgba(96,165,250,.12) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 50%, rgba(244,114,182,.10) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .tut-header h1 {
+      font-family: var(--mono);
+      font-size: clamp(1.4rem, 3.5vw, 2.4rem);
+      letter-spacing: -1px;
+      position: relative;
+    }
+    .tut-header h1 .hl { color: var(--header-c); }
+    .tut-header p {
+      color: var(--muted);
+      margin-top: .6rem;
+      font-size: 1rem;
+      position: relative;
+    }
+
+    /* Mapa visual de la estructura */
+    .mapa {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      margin: 2rem auto 0;
+      max-width: 480px;
+      font-family: var(--mono);
+      font-size: .75rem;
+      position: relative;
+    }
+    .mapa-row {
+      width: 100%;
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 1px solid;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      text-decoration: none;
+      display: block;
+      color: inherit;
+    }
+    .mapa-row:hover { filter: brightness(1.3); transform: scale(1.02); }
+    .mapa-row.r-html    { border-color: var(--header-c); color: var(--header-c); background: rgba(96,165,250,.07); }
+    .mapa-row.r-head    { border-color: var(--muted);    color: var(--muted);    background: rgba(107,117,153,.07); width:90%; }
+    .mapa-row.r-body    { border-color: var(--text);     color: var(--text);     background: rgba(226,232,248,.05); width:90%; }
+    .mapa-row.r-header  { border-color: var(--header-c); color: var(--header-c); background: rgba(96,165,250,.07); width:80%; }
+    .mapa-row.r-main    { border-color: var(--main-c);   color: var(--main-c);   background: rgba(249,115,22,.07); width:80%; }
+    .mapa-row.r-aside   { border-color: var(--aside-c);  color: var(--aside-c);  background: rgba(251,191,36,.07); width:80%; }
+    .mapa-row.r-footer  { border-color: var(--footer-c); color: var(--footer-c); background: rgba(244,114,182,.07); width:80%; }
+
+    /* =============================================
+       NAVEGACIÓN
+    ============================================= */
+    nav.tut-nav {
+      display: flex;
+      justify-content: center;
+      gap: .6rem;
+      padding: 1rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      flex-wrap: wrap;
+    }
+    nav.tut-nav a {
+      font-family: var(--mono);
+      font-size: .72rem;
+      font-weight: 700;
+      text-decoration: none;
+      padding: .35rem 1rem;
+      border-radius: 999px;
+      border: 1.5px solid;
+      transition: all .18s;
+      letter-spacing: .4px;
+    }
+    nav.tut-nav a:hover { color: var(--bg) !important; }
+    .n-header { color: var(--header-c) !important; border-color: var(--header-c) !important; }
+    .n-header:hover { background: var(--header-c) !important; }
+    .n-nav    { color: var(--nav-c)    !important; border-color: var(--nav-c)    !important; }
+    .n-nav:hover    { background: var(--nav-c)    !important; }
+    .n-main   { color: var(--main-c)   !important; border-color: var(--main-c)   !important; }
+    .n-main:hover   { background: var(--main-c)   !important; }
+    .n-aside  { color: var(--aside-c)  !important; border-color: var(--aside-c)  !important; }
+    .n-aside:hover  { background: var(--aside-c)  !important; }
+    .n-footer { color: var(--footer-c) !important; border-color: var(--footer-c) !important; }
+    .n-footer:hover { background: var(--footer-c) !important; }
+
+    /* =============================================
+       MAIN DEL TUTORIAL
+    ============================================= */
+    main.tut-main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem 5rem;
+    }
+
+    /* =============================================
+       SECCIÓN GENÉRICA
+    ============================================= */
+    .sec {
+      margin-bottom: 4rem;
+      border-radius: var(--radius);
+      padding: 2rem;
+      background: var(--surface);
+      border-left: 4px solid;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp .5s ease forwards;
+    }
+    .sec:nth-child(1){ animation-delay:.05s }
+    .sec:nth-child(2){ animation-delay:.15s }
+    .sec:nth-child(3){ animation-delay:.25s }
+    .sec:nth-child(4){ animation-delay:.35s }
+    .sec:nth-child(5){ animation-delay:.45s }
+    .sec:nth-child(6){ animation-delay:.55s }
+
+    @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+
+    .sec.s-header { border-color: var(--header-c); }
+    .sec.s-nav    { border-color: var(--nav-c);    }
+    .sec.s-main   { border-color: var(--main-c);   }
+    .sec.s-aside  { border-color: var(--aside-c);  }
+    .sec.s-footer { border-color: var(--footer-c); }
+    .sec.s-libre  { border-color: var(--muted);    }
+
+    .sec-title {
+      font-family: var(--mono);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: .25rem;
+    }
+    .s-header .sec-title { color: var(--header-c); }
+    .s-nav    .sec-title { color: var(--nav-c);    }
+    .s-main   .sec-title { color: var(--main-c);   }
+    .s-aside  .sec-title { color: var(--aside-c);  }
+    .s-footer .sec-title { color: var(--footer-c); }
+    .s-libre  .sec-title { color: var(--muted);    }
+
+    .sec-sub { color: var(--muted); font-size: .88rem; margin-bottom: 1.5rem; }
+
+    /* =============================================
+       TEORÍA
+    ============================================= */
+    .theory {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem;
+      margin-bottom: 1.5rem;
+    }
+    .theory h3 {
+      font-family: var(--mono);
+      font-size: .8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: .75rem;
+    }
+    .theory p { margin-bottom: .6rem; font-size: .95rem; }
+    .theory p:last-child { margin-bottom: 0; }
+
+    .code-block {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .9rem 1.1rem;
+      margin: .75rem 0;
+      font-family: var(--mono);
+      font-size: .78rem;
+      color: #c9d1e8;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.65;
+    }
+
+    /* Colores sintaxis */
+    .tag  { color: #f97316; }
+    .attr { color: #4ecdc4; }
+    .val  { color: #ffe66d; }
+    .cm   { color: var(--muted); font-style: italic; }
+    .prop { color: #60a5fa; }
+    .kw   { color: #c792ea; }
+    .str  { color: #a5f3fc; }
+    .fn   { color: #86efac; }
+
+    /* =============================================
+       LINKS DE REFERENCIA
+    ============================================= */
+    .ref-links {
+      display: flex;
+      gap: .6rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .ref-link {
+      font-family: var(--mono);
+      font-size: .72rem;
+      padding: .3rem .85rem;
+      border-radius: 999px;
+      border: 1.5px solid;
+      text-decoration: none;
+      transition: all .18s;
+      cursor: pointer;
+    }
+    .ref-link:hover { color: var(--bg) !important; }
+
+    /* =============================================
+       EJERCICIO
+    ============================================= */
+    .exercise {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem;
+      margin-bottom: 1.25rem;
+    }
+    .ex-header {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      margin-bottom: .85rem;
+    }
+    .badge {
+      font-family: var(--mono);
+      font-size: .65rem;
+      font-weight: 700;
+      padding: .22rem .65rem;
+      border-radius: 999px;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+    .s-header .badge { background: rgba(96,165,250,.15);  color: var(--header-c); }
+    .s-nav    .badge { background: rgba(52,211,153,.15);  color: var(--nav-c);    }
+    .s-main   .badge { background: rgba(249,115,22,.15);  color: var(--main-c);   }
+    .s-aside  .badge { background: rgba(251,191,36,.15);  color: var(--aside-c);  }
+    .s-footer .badge { background: rgba(244,114,182,.15); color: var(--footer-c); }
+    .s-libre  .badge { background: rgba(107,117,153,.15); color: var(--muted);    }
+
+    .exercise h3 { font-size: .98rem; font-weight: 600; }
+
+    .consigna {
+      background: rgba(255,255,255,.03);
+      border-left: 3px solid var(--muted);
+      padding: .65rem 1rem;
+      margin-bottom: 1rem;
+      border-radius: 0 6px 6px 0;
+      font-size: .88rem;
+      color: var(--muted);
+    }
+    .consigna strong { color: var(--text); }
+
+    .editor-preview {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 680px) {
+      .editor-preview { grid-template-columns: 1fr; }
+    }
+
+    .pane-label {
+      font-family: var(--mono);
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: .35rem;
+    }
+
+    textarea.code-editor {
+      width: 100%;
+      height: 200px;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: #c9d1e8;
+      font-family: var(--mono);
+      font-size: .76rem;
+      padding: .8rem 1rem;
+      resize: vertical;
+      outline: none;
+      line-height: 1.65;
+      transition: border-color .2s;
+      tab-size: 2;
+    }
+    textarea.code-editor:focus { border-color: var(--header-c); }
+
+    iframe.preview-frame {
+      width: 100%;
+      height: 200px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    /* =============================================
+       BOTONES
+    ============================================= */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      padding: .5rem 1.2rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-family: var(--sans);
+      font-size: .85rem;
+      font-weight: 600;
+      transition: all .15s;
+      margin-top: .65rem;
+    }
+    .btn-run {
+      background: var(--nav-c);
+      color: #0d1117;
+    }
+    .btn-run:hover { filter: brightness(.85); transform: translateY(-1px); }
+    .btn-download {
+      background: transparent;
+      border: 2px solid var(--aside-c);
+      color: var(--aside-c);
+    }
+    .btn-download:hover { background: var(--aside-c); color: var(--bg); }
+
+    /* =============================================
+       TABLA DE EXPLICACIÓN DE CÓDIGO
+    ============================================= */
+    .explicacion {
+      margin-bottom: 1rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .85rem 1rem;
+    }
+    .explicacion h4 {
+      font-family: var(--mono);
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: .6rem;
+    }
+    .explicacion table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .8rem;
+    }
+    .explicacion tr { border-bottom: 1px solid var(--border); }
+    .explicacion tr:last-child { border-bottom: none; }
+    .explicacion td {
+      padding: .4rem .5rem;
+      vertical-align: top;
+      line-height: 1.5;
+    }
+    .explicacion td:first-child {
+      font-family: var(--mono);
+      font-size: .71rem;
+      color: #f97316;
+      white-space: nowrap;
+      width: 36%;
+      background: rgba(0,0,0,.25);
+      border-radius: 4px;
+    }
+    .explicacion td.css-p { color: #60a5fa !important; font-family: var(--mono); font-size: .71rem; white-space: nowrap; width: 36%; background: rgba(0,0,0,.25); border-radius: 4px; vertical-align: top; padding: .4rem .5rem; }
+    .explicacion td:last-child { color: var(--text); padding-left: .85rem; }
+
+    /* =============================================
+       FOOTER DEL TUTORIAL
+    ============================================= */
+    footer.tut-footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--muted);
+      font-size: .83rem;
+      border-top: 1px solid var(--border);
+    }
+    footer.tut-footer span { color: var(--footer-c); }
+  </style>
+</head>
+<body>
+
+<!-- =============================================
+     ENCABEZADO DEL TUTORIAL
+============================================= -->
+<div class="tut-header">
+  <h1>🏗️ <span class="hl">Página Web Semántica</span> — HTML5</h1>
+  <p>Aprendé la estructura real de una página web moderna con ejercicios interactivos</p>
+
+  <!-- Mapa visual clickeable -->
+  <div class="mapa">
+    <a href="#s-header" class="mapa-row r-html">&lt;html&gt; — Documento completo</a>
+    <a href="#s-header" class="mapa-row r-head">&lt;head&gt; — Cabeza oculta (título, CSS, meta)</a>
+    <a href="#s-header" class="mapa-row r-body">&lt;body&gt; — Todo lo visible</a>
+    <a href="#s-header" class="mapa-row r-header">🔵 &lt;header&gt; — Encabezado + &lt;nav&gt;</a>
+    <a href="#s-main"   class="mapa-row r-main">🟠 &lt;main&gt; → &lt;article&gt; + &lt;section&gt; + &lt;figure&gt;</a>
+    <a href="#s-aside"  class="mapa-row r-aside">🟡 &lt;aside&gt; — Barra lateral</a>
+    <a href="#s-footer" class="mapa-row r-footer">🩷 &lt;footer&gt; — Pie de página</a>
+  </div>
+</div>
+
+<!-- =============================================
+     NAVEGACIÓN DEL TUTORIAL
+============================================= -->
+<nav class="tut-nav">
+  <a href="#s-header" class="n-header">🔵 header</a>
+  <a href="#s-nav"    class="n-nav">🟢 nav</a>
+  <a href="#s-main"   class="n-main">🟠 main</a>
+  <a href="#s-aside"  class="n-aside">🟡 aside</a>
+  <a href="#s-footer" class="n-footer">🩷 footer</a>
+</nav>
+
+<!-- =============================================
+     CONTENIDO PRINCIPAL
+============================================= -->
+<main class="tut-main">
+
+  <!-- ==========================================
+       SECCIÓN 1 — HEADER + HEAD
+  ========================================== -->
+  <section id="s-header" class="sec s-header">
+    <div class="sec-title">🔵 &lt;header&gt; y &lt;head&gt;</div>
+    <div class="sec-sub">La cabeza oculta y el encabezado visible del sitio</div>
+
+    <div class="theory">
+      <h3>📖 ¿Para qué sirven?</h3>
+      <p><strong style="color:var(--header-c)">&lt;head&gt;</strong> es invisible para el usuario. Contiene el título de la pestaña, links a CSS, fuentes y metadatos para Google.</p>
+      <p><strong style="color:var(--header-c)">&lt;header&gt;</strong> es la zona visible de arriba: logo, nombre del sitio y menú principal.</p>
+      <div class="code-block"><span class="cm">&lt;!-- HEAD: información para el navegador (no se ve) --&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="val">"UTF-8"</span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Mi Sitio Web<span class="tag">&lt;/title&gt;</span>
+  <span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="val">"stylesheet"</span> <span class="attr">href</span>=<span class="val">"estilos.css"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+
+<span class="cm">&lt;!-- HEADER: encabezado visible del sitio --&gt;</span>
+<span class="tag">&lt;header&gt;</span>
+  <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="val">"logo.png"</span> <span class="attr">alt</span>=<span class="val">"Logo"</span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;h1&gt;</span>Nombre del sitio<span class="tag">&lt;/h1&gt;</span>
+<span class="tag">&lt;/header&gt;</span></div>
+
+      <p>🔗 Referencias:</p>
+      <div class="ref-links">
+        <a href="https://www.w3schools.com/tags/tryit.asp?filename=tryhtml_head" target="_blank"
+           class="ref-link" style="color:var(--header-c);border-color:var(--header-c);"
+           onmouseover="this.style.background='var(--header-c)'"
+           onmouseout="this.style.background='transparent'">
+          → &lt;head&gt; en W3Schools
+        </a>
+        <a href="https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_header" target="_blank"
+           class="ref-link" style="color:var(--header-c);border-color:var(--header-c);"
+           onmouseover="this.style.background='var(--header-c)'"
+           onmouseout="this.style.background='transparent'">
+          → &lt;header&gt; en W3Schools
+        </a>
+        <a href="https://developer.mozilla.org/es/docs/Web/HTML/Element/header" target="_blank"
+           class="ref-link" style="color:var(--header-c);border-color:var(--header-c);"
+           onmouseover="this.style.background='var(--header-c)'"
+           onmouseout="this.style.background='transparent'">
+          → MDN en español
+        </a>
+      </div>
+    </div>
+
+    <!-- Ejercicio 1 -->
+    <div class="exercise">
+      <div class="ex-header">
+        <span class="badge">Ejercicio 1</span>
+        <h3>Crear un header con logo y título</h3>
+      </div>
+      <div class="consigna">
+        🎯 <strong>Consigna:</strong> Cambiá el texto del <code>&lt;h1&gt;</code> con el nombre de tu sitio.
+        Modificá el color de fondo del header en el CSS. Ejecutá para ver el resultado.
+      </div>
+
+      <!-- EXPLICACIÓN LÍNEA POR LÍNEA -->
+      <div class="explicacion">
+        <h4>📘 ¿Qué hace cada línea?</h4>
+        <table>
+          <tr><td>header { }</td><td>Le aplica estilos a la etiqueta <code>&lt;header&gt;</code></td></tr>
+          <tr><td class="css-p">background: #1e3a5f</td><td>Color de fondo azul oscuro (código hexadecimal). Podés cambiarlo por cualquier color, ej: <code>red</code>, <code>#ff0000</code></td></tr>
+          <tr><td class="css-p">color: white</td><td>Color del texto dentro del header → blanco</td></tr>
+          <tr><td class="css-p">padding: 20px 30px</td><td>Espacio interior: 20px arriba/abajo, 30px izquierda/derecha</td></tr>
+          <tr><td class="css-p">display: flex</td><td>Pone los elementos en fila (logo + texto uno al lado del otro)</td></tr>
+          <tr><td class="css-p">align-items: center</td><td>Alinea verticalmente al centro todos los hijos</td></tr>
+          <tr><td class="css-p">gap: 16px</td><td>Espacio de 16px entre el logo y el texto</td></tr>
+          <tr><td class="css-p">border-radius: 50%</td><td>En la imagen: hace que sea un círculo perfecto (50% = redondo)</td></tr>
+          <tr><td class="css-p">font-size: 1.4rem</td><td>Tamaño de letra. 1rem = tamaño base, 1.4rem = un poco más grande</td></tr>
+          <tr><td class="css-p">opacity: .7</td><td>Transparencia del 70% → el texto se ve un poco más suave</td></tr>
+          <tr><td>&lt;header&gt;</td><td>Etiqueta semántica: indica que es el encabezado del sitio</td></tr>
+          <tr><td>&lt;img src="..." alt=""/&gt;</td><td><code>src</code> = URL de la imagen · <code>alt</code> = texto alternativo para accesibilidad</td></tr>
+          <tr><td>&lt;div&gt;</td><td>Contenedor genérico que agrupa el h1 y el párrafo juntos</td></tr>
+          <tr><td>&lt;h1&gt;</td><td>Título principal de la página. Solo debe haber uno por página</td></tr>
+          <tr><td>&lt;p&gt;</td><td>Párrafo: texto secundario debajo del título</td></tr>
+        </table>
+      </div>
+      <div class="editor-preview">
+        <div>
+          <div class="pane-label">✏️ Editor</div>
+          <textarea class="code-editor" id="e1" spellcheck="false">&lt;style&gt;
+  header {
+    background: #1e3a5f;
+    color: white;
+    padding: 20px 30px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  header img { width: 50px; border-radius: 50%; }
+  header h1  { font-size: 1.4rem; }
+  header p   { font-size: .85rem; opacity: .7; }
+&lt;/style&gt;
+
+&lt;header&gt;
+  &lt;img src="https://picsum.photos/50/50?random=1" alt="Logo"/&gt;
+  &lt;div&gt;
+    &lt;h1&gt;Mi Sitio Web&lt;/h1&gt;
+    &lt;p&gt;Bienvenido a mi página&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/header&gt;</textarea>
+          <button class="btn btn-run" onclick="run('e1','p1')">▶ Ejecutar</button>
+        </div>
+        <div>
+          <div class="pane-label">👁️ Vista previa</div>
+          <iframe class="preview-frame" id="p1"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SECCIÓN 2 — NAV
+  ========================================== -->
+  <section id="s-nav" class="sec s-nav">
+    <div class="sec-title">🟢 &lt;nav&gt; — Menú de navegación</div>
+    <div class="sec-sub">La lista de links que guía al usuario por el sitio</div>
+
+    <div class="theory">
+      <h3>📖 ¿Para qué sirve?</h3>
+      <p><strong style="color:var(--nav-c)">&lt;nav&gt;</strong> agrupa los links de navegación principales. Suele vivir dentro del <code>&lt;header&gt;</code> o del <code>&lt;footer&gt;</code>.</p>
+      <p>Dentro del <code>&lt;nav&gt;</code> se usa una lista <code>&lt;ul&gt;</code> con ítems <code>&lt;li&gt;</code> y enlaces <code>&lt;a&gt;</code>.</p>
+      <div class="code-block"><span class="tag">&lt;nav&gt;</span>
+  <span class="tag">&lt;ul&gt;</span>
+    <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val">"#"</span><span class="tag">&gt;</span>Inicio<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val">"#"</span><span class="tag">&gt;</span>Acerca<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val">"#"</span><span class="tag">&gt;</span>Servicios<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val">"#"</span><span class="tag">&gt;</span>Contacto<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+  <span class="tag">&lt;/ul&gt;</span>
+<span class="tag">&lt;/nav&gt;</span></div>
+      <div class="ref-links">
+        <a href="https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_nav" target="_blank"
+           class="ref-link" style="color:var(--nav-c);border-color:var(--nav-c);"
+           onmouseover="this.style.background='var(--nav-c)'"
+           onmouseout="this.style.background='transparent'">
+          → &lt;nav&gt; en W3Schools
+        </a>
+        <a href="https://developer.mozilla.org/es/docs/Web/HTML/Element/nav" target="_blank"
+           class="ref-link" style="color:var(--nav-c);border-color:var(--nav-c);"
+           onmouseover="this.style.background='var(--nav-c)'"
+           onmouseout="this.style.background='transparent'">
+          → MDN en español
+        </a>
+      </div>
+    </div>
+
+    <!-- Ejercicio -->
+    <div class="exercise">
+      <div class="ex-header">
+        <span class="badge">Ejercicio 2</span>
+        <h3>Menú de navegación con hover</h3>
+      </div>
+      <div class="consigna">
+        🎯 <strong>Consigna:</strong> Pasá el mouse sobre los links en la vista previa.
+        Cambiá el color del <code>:hover</code> y agregá un ítem más al menú con <code>&lt;li&gt;</code>.
+      </div>
+      <div class="explicacion">
+        <h4>📘 ¿Qué hace cada línea?</h4>
+        <table>
+          <tr><td>nav { }</td><td>Estilos para la barra de navegación completa</td></tr>
+          <tr><td class="css-p">background: #0f172a</td><td>Fondo oscuro para el menú</td></tr>
+          <tr><td class="css-p">padding: 12px 24px</td><td>Espacio interior del nav</td></tr>
+          <tr><td>nav ul { }</td><td>Estilos para la lista dentro del nav</td></tr>
+          <tr><td class="css-p">list-style: none</td><td>Elimina los puntos/números de la lista</td></tr>
+          <tr><td class="css-p">display: flex</td><td>Pone los ítems en fila horizontal</td></tr>
+          <tr><td class="css-p">gap: 8px</td><td>Espacio entre cada ítem del menú</td></tr>
+          <tr><td>nav a { }</td><td>Estilos para los enlaces dentro del nav</td></tr>
+          <tr><td class="css-p">text-decoration: none</td><td>Quita el subrayado que tienen los links por defecto</td></tr>
+          <tr><td class="css-p">border-radius: 6px</td><td>Bordes levemente redondeados en cada link</td></tr>
+          <tr><td class="css-p">transition: all 0.2s</td><td>Hace que el cambio de color al hover sea suave (0.2 segundos)</td></tr>
+          <tr><td>nav a:hover { }</td><td>Estilos que se aplican SOLO cuando el mouse pasa por encima</td></tr>
+          <tr><td>&lt;nav&gt;</td><td>Etiqueta semántica: indica que es un menú de navegación</td></tr>
+          <tr><td>&lt;ul&gt; / &lt;li&gt;</td><td>Lista desordenada con sus ítems. Cada <code>&lt;li&gt;</code> es un ítem del menú</td></tr>
+          <tr><td>&lt;a href="#"&gt;</td><td>Enlace. El <code>#</code> significa "ningún destino todavía"</td></tr>
+        </table>
+      </div>
+      <div class="editor-preview">
+        <div>
+          <div class="pane-label">✏️ Editor</div>
+          <textarea class="code-editor" id="e2" spellcheck="false">&lt;style&gt;
+  nav { background: #0f172a; padding: 12px 24px; }
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 8px;
+  }
+  nav a {
+    color: #94a3b8;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-family: sans-serif;
+    transition: all 0.2s;
+  }
+  nav a:hover {
+    background: #34d399;
+    color: #0f172a;
+  }
+&lt;/style&gt;
+
+&lt;nav&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href="#"&gt;Inicio&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#"&gt;Acerca&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#"&gt;Servicios&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#"&gt;Contacto&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;</textarea>
+          <button class="btn btn-run" onclick="run('e2','p2')">▶ Ejecutar</button>
+        </div>
+        <div>
+          <div class="pane-label">👁️ Vista previa</div>
+          <iframe class="preview-frame" id="p2"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ejercicio JS nav -->
+    <div class="exercise">
+      <div class="ex-header">
+        <span class="badge">Ejercicio 3 — JS</span>
+        <h3>Menú responsive con JavaScript</h3>
+      </div>
+      <div class="consigna">
+        🎯 <strong>Consigna:</strong> Hacé click en el botón ☰ de la vista previa.
+        Cambiá el color del menú abierto modificando <code>background</code> en el CSS de <code>.menu-abierto</code>.
+      </div>
+      <div class="explicacion">
+        <h4>📘 ¿Qué hace cada línea?</h4>
+        <table>
+          <tr><td>ul { display: none }</td><td>El menú empieza oculto (no se ve)</td></tr>
+          <tr><td class="css-p">ul.menu-abierto</td><td>Clase CSS que se activa con JS → muestra el menú</td></tr>
+          <tr><td class="css-p">display: block</td><td>Hace visible el menú cuando tiene la clase <code>.menu-abierto</code></td></tr>
+          <tr><td>onclick="toggleMenu()"</td><td>Al hacer click en el botón, llama a la función <code>toggleMenu</code> de JS</td></tr>
+          <tr><td>function toggleMenu()</td><td>Función JavaScript que se ejecuta al hacer click</td></tr>
+          <tr><td>getElementById("menu")</td><td>Busca en el HTML el elemento con <code>id="menu"</code></td></tr>
+          <tr><td>classList.toggle(...)</td><td>Si la clase existe la quita, si no existe la agrega → abre/cierra el menú</td></tr>
+          <tr><td>"menu-abierto"</td><td>El nombre de la clase CSS que activa el menú visible</td></tr>
+        </table>
+      </div>
+      <div class="editor-preview">
+        <div>
+          <div class="pane-label">✏️ Editor</div>
+          <textarea class="code-editor" id="e3" spellcheck="false">&lt;style&gt;
+  nav { background: #1e293b; padding: 12px 20px; font-family: sans-serif; }
+  .btn-menu { background: none; border: 1px solid #94a3b8;
+    color: white; padding: 6px 12px; cursor: pointer; border-radius: 6px; }
+  ul { list-style: none; display: none; padding: 10px 0; }
+  ul.menu-abierto { display: block; background: #0f172a; }
+  li a { color: #94a3b8; text-decoration: none;
+    display: block; padding: 8px 16px; }
+  li a:hover { color: white; background: #334155; }
+&lt;/style&gt;
+
+&lt;nav&gt;
+  &lt;button class="btn-menu" onclick="toggleMenu()"&gt;☰ Menú&lt;/button&gt;
+  &lt;ul id="menu"&gt;
+    &lt;li&gt;&lt;a href="#"&gt;🏠 Inicio&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#"&gt;👤 Acerca&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#"&gt;🛠 Servicios&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#"&gt;📬 Contacto&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;
+
+&lt;script&gt;
+  function toggleMenu() {
+    const menu = document.getElementById("menu");
+    menu.classList.toggle("menu-abierto");
+  }
+&lt;/script&gt;</textarea>
+          <button class="btn btn-run" onclick="run('e3','p3')">▶ Ejecutar</button>
+        </div>
+        <div>
+          <div class="pane-label">👁️ Vista previa</div>
+          <iframe class="preview-frame" id="p3"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SECCIÓN 3 — MAIN / ARTICLE / SECTION / FIGURE
+  ========================================== -->
+  <section id="s-main" class="sec s-main">
+    <div class="sec-title">🟠 &lt;main&gt;, &lt;article&gt;, &lt;section&gt; y &lt;figure&gt;</div>
+    <div class="sec-sub">El corazón del contenido de tu página</div>
+
+    <div class="theory">
+      <h3>📖 ¿Para qué sirve cada uno?</h3>
+      <p><strong style="color:var(--main-c)">&lt;main&gt;</strong> — Contenedor del contenido principal. Solo debe haber uno por página.</p>
+      <p><strong style="color:var(--article-c)">&lt;article&gt;</strong> — Contenido independiente: una noticia, un post, una tarjeta.</p>
+      <p><strong style="color:var(--section-c)">&lt;section&gt;</strong> — Agrupación temática dentro del main o del article.</p>
+      <p><strong style="color:var(--figure-c)">&lt;figure&gt; + &lt;figcaption&gt;</strong> — Imagen con su descripción.</p>
+      <div class="code-block"><span class="tag">&lt;main&gt;</span>
+  <span class="tag">&lt;article&gt;</span>
+    <span class="tag">&lt;h2&gt;</span>Título del artículo<span class="tag">&lt;/h2&gt;</span>
+    <span class="tag">&lt;h3&gt;</span>Subtítulo<span class="tag">&lt;/h3&gt;</span>
+    <span class="tag">&lt;p&gt;</span>Contenido del artículo...<span class="tag">&lt;/p&gt;</span>
+
+    <span class="tag">&lt;figure&gt;</span>
+      <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="val">"imagen.jpg"</span> <span class="attr">alt</span>=<span class="val">"Descripción"</span><span class="tag">/&gt;</span>
+      <span class="tag">&lt;figcaption&gt;</span>Pie de imagen<span class="tag">&lt;/figcaption&gt;</span>
+    <span class="tag">&lt;/figure&gt;</span>
+
+    <span class="tag">&lt;button&gt;</span>Leer más<span class="tag">&lt;/button&gt;</span>
+  <span class="tag">&lt;/article&gt;</span>
+<span class="tag">&lt;/main&gt;</span></div>
+      <div class="ref-links">
+        <a href="https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_main" target="_blank"
+           class="ref-link" style="color:var(--main-c);border-color:var(--main-c);"
+           onmouseover="this.style.background='var(--main-c)'"
+           onmouseout="this.style.background='transparent'">&lt;main&gt;</a>
+        <a href="https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_article" target="_blank"
+           class="ref-link" style="color:var(--article-c);border-color:var(--article-c);"
+           onmouseover="this.style.background='var(--article-c)'"
+           onmouseout="this.style.background='transparent'">&lt;article&gt;</a>
+        <a href="https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_section" target="_blank"
+           class="ref-link" style="color:var(--section-c);border-color:var(--section-c);"
+           onmouseover="this.style.background='var(--section-c)'"
+           onmouseout="this.style.background='transparent'">&lt;section&gt;</a>
+        <a href="https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_figure" target="_blank"
+           class="ref-link" style="color:var(--figure-c);border-color:var(--figure-c);"
+           onmouseover="this.style.background='var(--figure-c)'"
+           onmouseout="this.style.background='transparent'">&lt;figure&gt;</a>
+        <a href="https://developer.mozilla.org/es/docs/Web/HTML/Element/article" target="_blank"
+           class="ref-link" style="color:var(--main-c);border-color:var(--main-c);"
+           onmouseover="this.style.background='var(--main-c)'"
+           onmouseout="this.style.background='transparent'">MDN español</a>
+      </div>
+    </div>
+
+    <!-- Ejercicio article -->
+    <div class="exercise">
+      <div class="ex-header">
+        <span class="badge">Ejercicio 4</span>
+        <h3>Crear un artículo con imagen</h3>
+      </div>
+      <div class="consigna">
+        🎯 <strong>Consigna:</strong> Cambiá el título, el párrafo y el texto del <code>&lt;figcaption&gt;</code>.
+        Modificá el <code>border-radius</code> de la imagen para que sea más o menos redondeada.
+      </div>
+      <div class="explicacion">
+        <h4>📘 ¿Qué hace cada línea?</h4>
+        <table>
+          <tr><td>background: #f8fafc</td><td>Fondo gris muy claro para el body</td></tr>
+          <tr><td class="css-p">box-shadow: ...</td><td>Sombra suave debajo del artículo para dar profundidad</td></tr>
+          <tr><td class="css-p">max-width: 400px</td><td>El artículo no crece más de 400px de ancho</td></tr>
+          <tr><td class="css-p">border-radius: 8px</td><td>En la imagen: qué tan redondeadas son las esquinas. 0 = cuadrado, 50% = círculo</td></tr>
+          <tr><td class="css-p">width: 100%</td><td>La imagen ocupa todo el ancho disponible del article</td></tr>
+          <tr><td>&lt;article&gt;</td><td>Contenido independiente y reutilizable (noticia, tarjeta, post)</td></tr>
+          <tr><td>&lt;h2&gt; / &lt;h3&gt;</td><td>Título y subtítulo del artículo. h2 es más grande que h3</td></tr>
+          <tr><td>&lt;figure&gt;</td><td>Contenedor semántico para una imagen + su descripción</td></tr>
+          <tr><td>&lt;img src="..." /&gt;</td><td><code>src</code> = dirección de la imagen en internet</td></tr>
+          <tr><td>&lt;figcaption&gt;</td><td>Texto descriptivo que aparece debajo de la imagen</td></tr>
+          <tr><td>onclick="alert(...)"</td><td>Al hacer click en el botón, muestra un mensaje emergente</td></tr>
+        </table>
+      </div>
+      <div class="editor-preview">
+        <div>
+          <div class="pane-label">✏️ Editor</div>
+          <textarea class="code-editor" id="e4" spellcheck="false">&lt;style&gt;
+  body { font-family: sans-serif; padding: 16px; background: #f8fafc; }
+  article {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    max-width: 400px;
+  }
+  h2 { color: #f97316; margin-bottom: 6px; }
+  h3 { color: #64748b; font-size: .9rem; margin-bottom: 12px; }
+  figure { margin: 14px 0; }
+  figure img { width: 100%; border-radius: 8px; }
+  figcaption { font-size: .8rem; color: gray; margin-top: 6px; }
+  button {
+    background: #f97316; color: white;
+    border: none; padding: 8px 20px;
+    border-radius: 6px; cursor: pointer;
+    margin-top: 10px;
+  }
+  button:hover { background: #ea580c; }
+&lt;/style&gt;
+
+&lt;article&gt;
+  &lt;h2&gt;Titulo del artículo&lt;/h2&gt;
+  &lt;h3&gt;Subtítulo descriptivo&lt;/h3&gt;
+  &lt;p&gt;Este es el contenido del artículo. Podés modificar
+  este texto para practicar.&lt;/p&gt;
+  &lt;figure&gt;
+    &lt;img src="https://picsum.photos/400/200?random=5" alt="Imagen"/&gt;
+    &lt;figcaption&gt;Descripción de la imagen&lt;/figcaption&gt;
+  &lt;/figure&gt;
+  &lt;button onclick="alert('¡Leer más!')"&gt;Leer más →&lt;/button&gt;
+&lt;/article&gt;</textarea>
+          <button class="btn btn-run" onclick="run('e4','p4')">▶ Ejecutar</button>
+        </div>
+        <div>
+          <div class="pane-label">👁️ Vista previa</div>
+          <iframe class="preview-frame" id="p4" style="height:280px"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ejercicio section -->
+    <div class="exercise">
+      <div class="ex-header">
+        <span class="badge">Ejercicio 5</span>
+        <h3>Section con tarjetas</h3>
+      </div>
+      <div class="consigna">
+        🎯 <strong>Consigna:</strong> Agregá una tercera tarjeta copiando uno de los <code>&lt;div class="card"&gt;</code>.
+        Cambiá el emoji y el texto. Modificá el <code>grid-template-columns</code> para cambiar el layout.
+      </div>
+      <div class="explicacion">
+        <h4>📘 ¿Qué hace cada línea?</h4>
+        <table>
+          <tr><td>display: grid</td><td>Activa el sistema de grilla CSS para organizar las tarjetas</td></tr>
+          <tr><td class="css-p">grid-template-columns: 1fr 1fr</td><td>Crea 2 columnas de igual tamaño. Podés poner <code>1fr 1fr 1fr</code> para 3 columnas</td></tr>
+          <tr><td class="css-p">gap: 12px</td><td>Espacio entre las tarjetas de la grilla</td></tr>
+          <tr><td class="css-p">border: 2px solid #fed7aa</td><td>Borde de 2px sólido color naranja claro</td></tr>
+          <tr><td class="css-p">text-align: center</td><td>Centra todo el contenido dentro de la tarjeta</td></tr>
+          <tr><td class="css-p">font-size: 2rem</td><td>Hace el emoji grande (2 veces el tamaño base)</td></tr>
+          <tr><td>&lt;section&gt;</td><td>Agrupación temática de contenido. Acá agrupa las tarjetas de servicios</td></tr>
+          <tr><td>&lt;div class="grid"&gt;</td><td>Contenedor al que le aplicamos el CSS de grilla</td></tr>
+          <tr><td>&lt;div class="card"&gt;</td><td>Cada tarjeta individual. Se puede copiar y pegar para agregar más</td></tr>
+          <tr><td>class="icono"</td><td>Clase CSS para dar estilo al emoji (tamaño grande)</td></tr>
+        </table>
+      </div>
+      <div class="editor-preview">
+        <div>
+          <div class="pane-label">✏️ Editor</div>
+          <textarea class="code-editor" id="e5" spellcheck="false">&lt;style&gt;
+  body { font-family: sans-serif; padding: 16px; background: #fff7ed; }
+  section h2 { color: #ea580c; margin-bottom: 14px; }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .card {
+    background: white;
+    border: 2px solid #fed7aa;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .card .icono { font-size: 2rem; }
+  .card h3 { margin: 8px 0 4px; color: #9a3412; font-size: .95rem; }
+  .card p  { font-size: .82rem; color: #78716c; }
+&lt;/style&gt;
+
+&lt;section&gt;
+  &lt;h2&gt;Nuestros servicios&lt;/h2&gt;
+  &lt;div class="grid"&gt;
+    &lt;div class="card"&gt;
+      &lt;div class="icono"&gt;🎨&lt;/div&gt;
+      &lt;h3&gt;Diseño Web&lt;/h3&gt;
+      &lt;p&gt;Creamos sitios modernos y atractivos.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class="card"&gt;
+      &lt;div class="icono"&gt;⚡&lt;/div&gt;
+      &lt;h3&gt;Desarrollo&lt;/h3&gt;
+      &lt;p&gt;Código limpio y rápido.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;</textarea>
+          <button class="btn btn-run" onclick="run('e5','p5')">▶ Ejecutar</button>
+        </div>
+        <div>
+          <div class="pane-label">👁️ Vista previa</div>
+          <iframe class="preview-frame" id="p5" style="height:240px"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SECCIÓN 4 — ASIDE
+  ========================================== -->
+  <section id="s-aside" class="sec s-aside">
+    <div class="sec-title">🟡 &lt;aside&gt; — Barra lateral</div>
+    <div class="sec-sub">Contenido secundario: buscador, links relacionados, widgets</div>
+
+    <div class="theory">
+      <h3>📖 ¿Para qué sirve?</h3>
+      <p><strong style="color:var(--aside-c)">&lt;aside&gt;</strong> contiene información complementaria al contenido principal: un buscador, links relacionados, publicidades, o un índice.</p>
+      <p>Suele mostrarse como una columna lateral usando CSS Grid o Flexbox.</p>
+      <div class="code-block"><span class="tag">&lt;aside&gt;</span>
+  <span class="tag">&lt;section&gt;</span>
+    <span class="tag">&lt;h4&gt;</span>Buscar<span class="tag">&lt;/h4&gt;</span>
+    <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="val">"text"</span> <span class="attr">placeholder</span>=<span class="val">"Buscar..."</span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;/section&gt;</span>
+  <span class="tag">&lt;section&gt;</span>
+    <span class="tag">&lt;h4&gt;</span>Links relacionados<span class="tag">&lt;/h4&gt;</span>
+    <span class="tag">&lt;ul&gt;</span>
+      <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val">"#"</span><span class="tag">&gt;</span>Artículo 1<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="tag">&lt;/ul&gt;</span>
+  <span class="tag">&lt;/section&gt;</span>
+<span class="tag">&lt;/aside&gt;</span></div>
+      <div class="ref-links">
+        <a href="https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_aside" target="_blank"
+           class="ref-link" style="color:var(--aside-c);border-color:var(--aside-c);"
+           onmouseover="this.style.background='var(--aside-c)'"
+           onmouseout="this.style.background='transparent'">→ &lt;aside&gt; en W3Schools</a>
+        <a href="https://developer.mozilla.org/es/docs/Web/HTML/Element/aside" target="_blank"
+           class="ref-link" style="color:var(--aside-c);border-color:var(--aside-c);"
+           onmouseover="this.style.background='var(--aside-c)'"
+           onmouseout="this.style.background='transparent'">→ MDN en español</a>
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-header">
+        <span class="badge">Ejercicio 6</span>
+        <h3>Barra lateral con buscador y links</h3>
+      </div>
+      <div class="consigna">
+        🎯 <strong>Consigna:</strong> Hacé click en "Buscar" de la vista previa.
+        Agregá más links en la lista. Cambiá el color del <code>h4</code> en el CSS.
+      </div>
+      <div class="explicacion">
+        <h4>📘 ¿Qué hace cada línea?</h4>
+        <table>
+          <tr><td>&lt;aside&gt;</td><td>Contenido lateral secundario: complementa al main pero no es lo principal</td></tr>
+          <tr><td>&lt;section&gt; dentro del aside</td><td>Cada bloque del aside (buscador, archivos, links) es una section</td></tr>
+          <tr><td>border-bottom: 2px solid</td><td>Línea decorativa debajo del título h4</td></tr>
+          <tr><td>height: fit-content</td><td>El aside solo ocupa lo que necesita, no se estira</td></tr>
+          <tr><td>&lt;input type="text"&gt;</td><td>Campo de texto donde el usuario puede escribir para buscar</td></tr>
+          <tr><td>placeholder="..."</td><td>Texto gris que aparece dentro del input cuando está vacío</td></tr>
+          <tr><td>onclick="alert(...)"</td><td>Al hacer click en el botón ejecuta JS que muestra un mensaje</td></tr>
+          <tr><td>target="_blank"</td><td>Abre el link en una pestaña nueva del navegador</td></tr>
+          <tr><td>list-style: none</td><td>Elimina los puntos de la lista para que se vea más limpia</td></tr>
+        </table>
+      </div>
+      <div class="editor-preview">
+        <div>
+          <div class="pane-label">✏️ Editor</div>
+          <textarea class="code-editor" id="e6" spellcheck="false">&lt;style&gt;
+  body { font-family: sans-serif; padding: 16px; background: #fffbeb; }
+  aside { background: white; border: 2px solid #fde68a;
+    border-radius: 12px; padding: 16px; max-width: 220px; }
+  aside section { margin-bottom: 18px; }
+  aside h4 {
+    color: #b45309;
+    border-bottom: 2px solid #fbbf24;
+    padding-bottom: 4px;
+    margin-bottom: 10px;
+  }
+  aside input {
+    width: 100%; padding: 7px 10px;
+    border: 1px solid #d1d5db; border-radius: 6px;
+    margin-bottom: 6px;
+  }
+  aside button {
+    background: #fbbf24; border: none;
+    padding: 6px 14px; border-radius: 6px; cursor: pointer;
+  }
+  aside ul { list-style: none; padding: 0; }
+  aside li { padding: 3px 0; }
+  aside a { color: #2563eb; text-decoration: none; }
+  aside a:hover { text-decoration: underline; }
+&lt;/style&gt;
+
+&lt;aside&gt;
+  &lt;section&gt;
+    &lt;h4&gt;🔍 Buscar&lt;/h4&gt;
+    &lt;input type="text" placeholder="Escribí algo..."/&gt;
+    &lt;button onclick="alert('Buscando...')"&gt;Buscar&lt;/button&gt;
+  &lt;/section&gt;
+  &lt;section&gt;
+    &lt;h4&gt;📁 Archivos&lt;/h4&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href="#"&gt;Inicio&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="#"&gt;Servicios&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="#"&gt;Blog&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/section&gt;
+  &lt;section&gt;
+    &lt;h4&gt;🔗 Relacionados&lt;/h4&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href="https://developer.mozilla.org" target="_blank"&gt;MDN Web Docs&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="https://www.w3schools.com" target="_blank"&gt;W3Schools&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/section&gt;
+&lt;/aside&gt;</textarea>
+          <button class="btn btn-run" onclick="run('e6','p6')">▶ Ejecutar</button>
+        </div>
+        <div>
+          <div class="pane-label">👁️ Vista previa</div>
+          <iframe class="preview-frame" id="p6" style="height:280px"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SECCIÓN 5 — FOOTER
+  ========================================== -->
+  <section id="s-footer" class="sec s-footer">
+    <div class="sec-title">🩷 &lt;footer&gt; — Pie de página</div>
+    <div class="sec-sub">Copyright, redes sociales y navegación secundaria</div>
+
+    <div class="theory">
+      <h3>📖 ¿Para qué sirve?</h3>
+      <p><strong style="color:var(--footer-c)">&lt;footer&gt;</strong> cierra la página. Contiene el copyright, links secundarios, redes sociales y datos de contacto.</p>
+      <div class="code-block"><span class="tag">&lt;footer&gt;</span>
+  <span class="tag">&lt;p&gt;</span>© 2024 Mi Sitio. Todos los derechos reservados.<span class="tag">&lt;/p&gt;</span>
+
+  <span class="tag">&lt;nav&gt;</span>
+    <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="val">"#"</span><span class="tag">&gt;</span>Inicio<span class="tag">&lt;/a&gt;</span>
+    <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="val">"#"</span><span class="tag">&gt;</span>Contacto<span class="tag">&lt;/a&gt;</span>
+  <span class="tag">&lt;/nav&gt;</span>
+
+  <span class="tag">&lt;ul</span> <span class="attr">class</span>=<span class="val">"redes"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val">"#"</span><span class="tag">&gt;</span>📘 Facebook<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val">"#"</span><span class="tag">&gt;</span>🐦 Twitter<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+  <span class="tag">&lt;/ul&gt;</span>
+<span class="tag">&lt;/footer&gt;</span></div>
+      <div class="ref-links">
+        <a href="https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_footer" target="_blank"
+           class="ref-link" style="color:var(--footer-c);border-color:var(--footer-c);"
+           onmouseover="this.style.background='var(--footer-c)'"
+           onmouseout="this.style.background='transparent'">→ &lt;footer&gt; en W3Schools</a>
+        <a href="https://developer.mozilla.org/es/docs/Web/HTML/Element/footer" target="_blank"
+           class="ref-link" style="color:var(--footer-c);border-color:var(--footer-c);"
+           onmouseover="this.style.background='var(--footer-c)'"
+           onmouseout="this.style.background='transparent'">→ MDN en español</a>
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-header">
+        <span class="badge">Ejercicio 7</span>
+        <h3>Footer completo con redes sociales</h3>
+      </div>
+      <div class="consigna">
+        🎯 <strong>Consigna:</strong> Cambiá el año y el nombre del sitio en el copyright.
+        Agregá una red social más en la lista <code>.redes</code>. Cambiá el color de fondo del footer.
+      </div>
+      <div class="explicacion">
+        <h4>📘 ¿Qué hace cada línea?</h4>
+        <table>
+          <tr><td>&lt;footer&gt;</td><td>Etiqueta semántica del pie de página: copyright, links secundarios, redes</td></tr>
+          <tr><td class="css-p">justify-content: space-between</td><td>Distribuye los 3 bloques (copyright, nav, redes) a los extremos</td></tr>
+          <tr><td class="css-p">flex-wrap: wrap</td><td>Si no entra todo en una fila, baja a la siguiente línea automáticamente</td></tr>
+          <tr><td class="css-p">gap: 14px</td><td>Espacio entre los bloques del footer</td></tr>
+          <tr><td>&lt;p&gt; © 2024</td><td>Texto de copyright. El símbolo © se escribe <code>&amp;copy;</code> en HTML</td></tr>
+          <tr><td>&lt;nav&gt; en el footer</td><td>Links secundarios. Un footer puede tener su propio nav</td></tr>
+          <tr><td class="css-p">ul.redes</td><td>Lista de redes sociales con la clase "redes"</td></tr>
+          <tr><td class="css-p">background: rgba(255,255,255,.1)</td><td>Fondo blanco al 10% de opacidad → efecto vidrio suave</td></tr>
+          <tr><td>.redes a:hover</td><td>Al pasar el mouse sobre una red, cambia a color rosa</td></tr>
+        </table>
+      </div>
+      <div class="editor-preview">
+        <div>
+          <div class="pane-label">✏️ Editor</div>
+          <textarea class="code-editor" id="e7" spellcheck="false">&lt;style&gt;
+  body { font-family: sans-serif; margin: 0; }
+  footer {
+    background: #1e1b4b;
+    color: #a5b4fc;
+    padding: 24px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  footer p { font-size: .85rem; }
+  footer nav a {
+    color: #818cf8; text-decoration: none;
+    margin: 0 8px; font-size: .85rem;
+  }
+  footer nav a:hover { color: white; }
+  .redes { list-style: none; display: flex; gap: 10px; padding: 0; }
+  .redes a {
+    color: white; text-decoration: none;
+    background: rgba(255,255,255,.1);
+    padding: 6px 12px; border-radius: 6px;
+    font-size: .85rem; transition: background .2s;
+  }
+  .redes a:hover { background: #f472b6; }
+&lt;/style&gt;
+
+&lt;footer&gt;
+  &lt;p&gt;© 2024 Mi Sitio Web. Todos los derechos reservados.&lt;/p&gt;
+  &lt;nav&gt;
+    &lt;a href="#"&gt;Inicio&lt;/a&gt;
+    &lt;a href="#"&gt;Acerca&lt;/a&gt;
+    &lt;a href="#"&gt;Contacto&lt;/a&gt;
+  &lt;/nav&gt;
+  &lt;ul class="redes"&gt;
+    &lt;li&gt;&lt;a href="#"&gt;📘 Facebook&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#"&gt;🐦 Twitter&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#"&gt;📸 Instagram&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/footer&gt;</textarea>
+          <button class="btn btn-run" onclick="run('e7','p7')">▶ Ejecutar</button>
+        </div>
+        <div>
+          <div class="pane-label">👁️ Vista previa</div>
+          <iframe class="preview-frame" id="p7"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SECCIÓN 6 — PÁGINA COMPLETA LIBRE
+  ========================================== -->
+  <section id="s-libre" class="sec s-libre">
+    <div class="sec-title">🚀 Página completa — Área libre</div>
+    <div class="sec-sub">Armá tu propia página semántica combinando todo lo aprendido</div>
+
+    <div class="exercise">
+      <div class="ex-header">
+        <span class="badge">🆓 Desafío final</span>
+        <h3>Creá tu propia página semántica completa</h3>
+      </div>
+      <div class="consigna">
+        🎯 <strong>Consigna:</strong> El editor ya tiene la estructura completa con todas las etiquetas.
+        Modificá los textos, colores y contenido para crear tu propia página.
+        Cuando termines, descargá el archivo con el botón de abajo.
+      </div>
+      <div class="editor-preview">
+        <div>
+          <div class="pane-label">✏️ Editor libre</div>
+          <textarea class="code-editor" id="elibre" style="height:340px" spellcheck="false">&lt;style&gt;
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: sans-serif; background: #f1f5f9; }
+
+  header {
+    background: #0f172a; color: white;
+    padding: 16px 24px;
+    display: flex; align-items: center;
+    justify-content: space-between;
+  }
+  header h1 { font-size: 1.3rem; }
+  nav ul { list-style:none; display:flex; gap:6px; }
+  nav a  { color:#94a3b8; text-decoration:none;
+    padding:6px 12px; border-radius:5px; }
+  nav a:hover { background:#1e293b; color:white; }
+
+  .contenido {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    padding: 24px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  article {
+    background: white; border-radius: 10px;
+    padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  }
+  article h2 { color: #0f172a; margin-bottom: 8px; }
+  article p  { color: #64748b; margin-bottom: 12px; }
+  figure img { width:100%; border-radius:8px; margin:10px 0; }
+  figcaption { font-size:.8rem; color:#94a3b8; }
+  button {
+    background:#3b82f6; color:white; border:none;
+    padding:8px 18px; border-radius:6px; cursor:pointer;
+  }
+  button:hover { background:#1d4ed8; }
+
+  aside {
+    background:white; border-radius:10px;
+    padding:16px; box-shadow:0 2px 8px rgba(0,0,0,.06);
+    height: fit-content;
+  }
+  aside h4 { color:#0f172a; margin-bottom:8px;
+    padding-bottom:4px; border-bottom:2px solid #e2e8f0; }
+  aside ul { list-style:none; padding:0; margin-bottom:14px; }
+  aside li { padding:3px 0; }
+  aside a  { color:#3b82f6; text-decoration:none; }
+
+  footer {
+    background:#0f172a; color:#64748b;
+    padding:16px 24px; text-align:center;
+    font-size:.85rem; margin-top:20px;
+  }
+&lt;/style&gt;
+
+&lt;header&gt;
+  &lt;h1&gt;🌐 Mi Sitio Web&lt;/h1&gt;
+  &lt;nav&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href="#"&gt;Inicio&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="#"&gt;Blog&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="#"&gt;Contacto&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/nav&gt;
+&lt;/header&gt;
+
+&lt;main&gt;
+  &lt;div class="contenido"&gt;
+    &lt;article&gt;
+      &lt;h2&gt;Título del artículo&lt;/h2&gt;
+      &lt;p&gt;Acá va el contenido principal de tu página.
+      Podés escribir lo que quieras.&lt;/p&gt;
+      &lt;figure&gt;
+        &lt;img src="https://picsum.photos/500/200?random=10" alt="Imagen"/&gt;
+        &lt;figcaption&gt;Descripción de la imagen&lt;/figcaption&gt;
+      &lt;/figure&gt;
+      &lt;button onclick="alert('¡Hola!')"&gt;Leer más →&lt;/button&gt;
+    &lt;/article&gt;
+
+    &lt;aside&gt;
+      &lt;h4&gt;🔗 Links&lt;/h4&gt;
+      &lt;ul&gt;
+        &lt;li&gt;&lt;a href="https://developer.mozilla.org" target="_blank"&gt;MDN Docs&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="https://www.w3schools.com" target="_blank"&gt;W3Schools&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+      &lt;h4&gt;📋 Temas&lt;/h4&gt;
+      &lt;ul&gt;
+        &lt;li&gt;&lt;a href="#"&gt;HTML semántico&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#"&gt;CSS Grid&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#"&gt;JavaScript&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/aside&gt;
+  &lt;/div&gt;
+&lt;/main&gt;
+
+&lt;footer&gt;
+  &lt;p&gt;© 2024 Mi Sitio Web · Hecho con HTML5 semántico&lt;/p&gt;
+&lt;/footer&gt;</textarea>
+          <button class="btn btn-run" onclick="run('elibre','plibre')">▶ Ejecutar</button>
+          <button class="btn btn-download" onclick="descargar()" style="margin-left:.5rem">⬇ Descargar mi página</button>
+        </div>
+        <div>
+          <div class="pane-label">👁️ Vista previa</div>
+          <iframe class="preview-frame" id="plibre" style="height:340px"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main><!-- /tut-main -->
+
+<footer class="tut-footer">
+  <p>Tutorial Semántica HTML5 · Hecho con <span>♥</span> para estudiantes de programación web</p>
+</footer>
+
+<!-- =============================================
+     JAVASCRIPT DEL TUTORIAL
+============================================= -->
+<script>
+  /**
+   * run() — Renderiza el código del textarea en el iframe
+   */
+  function run(editorId, previewId) {
+    const code  = document.getElementById(editorId).value;
+    const frame = document.getElementById(previewId);
+    const doc   = frame.contentDocument || frame.contentWindow.document;
+    doc.open();
+    doc.write(`<!DOCTYPE html><html lang="es"><head>
+      <meta charset="UTF-8"/>
+      <style>body{font-family:sans-serif;padding:10px;margin:0}</style>
+    </head><body>${code}</body></html>`);
+    doc.close();
+  }
+
+  /**
+   * descargar() — Genera y descarga el HTML del editor libre
+   */
+  function descargar() {
+    const code = document.getElementById("elibre").value;
+    const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mi Página Semántica HTML5</title>
+</head>
+<body>
+${code}
+</body>
+</html>`;
+    const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement("a");
+    a.href = url; a.download = "mi-pagina-semantica.html";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  /* Ejecutar todos los editores al cargar */
+  document.addEventListener("DOMContentLoaded", () => {
+    const pares = [
+      ["e1","p1"],["e2","p2"],["e3","p3"],
+      ["e4","p4"],["e5","p5"],["e6","p6"],
+      ["e7","p7"],["elibre","plibre"]
+    ];
+    pares.forEach(([e, p]) => run(e, p));
+  });
+
+  /* Ctrl+Enter para ejecutar el editor activo */
+  document.addEventListener("keydown", e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      const active = document.activeElement;
+      if (active && active.classList.contains("code-editor")) {
+        const map = {
+          "e1":"p1","e2":"p2","e3":"p3","e4":"p4",
+          "e5":"p5","e6":"p6","e7":"p7","elibre":"plibre"
+        };
+        if (map[active.id]) { run(active.id, map[active.id]); e.preventDefault(); }
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
